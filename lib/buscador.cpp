@@ -30,6 +30,17 @@ ostream& operator<<(ostream &os, const ResultadoRI &res){
 }
 
 //######################### BUSCADOR ###########################################
+/* Este constructor se pone en la parte privada porque no se permitirá crear  
+un  buscador  sin  inicializarlo  convenientemente  a  partir  de  una indexación. 
+*/
+/*  Se  inicializará  con  todos  los  campos  vacíos  y  la  variable  
+privada "formSimilitud" con valor 0 y las constantes de cada modelo: 
+"c = 2;  k1 = 1.2; b = 0.75"
+*/
+Buscador::Buscador(){
+    
+}
+
 /* 
 Constructor  para  inicializar  Buscador  a  partir  de  la  indexación generada
 previamente y almacenada en "directorioIndexacion". En caso que no exista el
@@ -81,7 +92,7 @@ introduzca  el  parámetro  "numDocumentos", entonces dicho parámetro se inicia
 a 99999)
 */
 bool
-Buscador::Buscar(const int& numDocumentos = 99999){
+Buscador::Buscar(const int& numDocumentos){
     
 }
 
@@ -151,7 +162,7 @@ fich_salida_buscador.txt > fich_salida_trec_eval.res",
 para  obtener  los  datos  de  precisión  y cobertura
 */
 void 
-Buscador::ImprimirResultadoBusqueda(const int& numDocumentos = 99999) const{
+Buscador::ImprimirResultadoBusqueda(const int& numDocumentos) const{
     
 }
 
@@ -204,16 +215,5 @@ Buscador::CambiarParametrosBM25(const double& kk1, const double& kb){
 // Devuelve el valor de "k1" y "b"
 void 
 Buscador::DevolverParametrosBM25(double& kk1, double& kb) const{
-    
-}
-
-/* Este constructor se pone en la parte privada porque no se permitirá crear  
-un  buscador  sin  inicializarlo  convenientemente  a  partir  de  una indexación. 
-*/
-/*  Se  inicializará  con  todos  los  campos  vacíos  y  la  variable  
-privada "formSimilitud" con valor 0 y las constantes de cada modelo: 
-"c = 2;  k1 = 1.2; b = 0.75"
-*/
-Buscador::Buscador(){
     
 }

@@ -44,6 +44,10 @@ const  int&  tStemmer,  const  bool&  almEnDisco,  const  bool& almPosTerm){
     system(cmd.c_str());
 }
 
+IndexadorHash::IndexadorHash(){
+    //FALTA
+}
+
 bool
 IndexadorHash::almacenarStopWords(const string& fichStopWords){
     stemmerPorter stemmer;

@@ -66,7 +66,7 @@ class IndexadorHash {
         bool ListarTerminos(const string& nomDoc) const;  // Devuelve true si nomDoc existe en la colección y muestra por pantalla todos los términos indexados del documento con nombre "nomDoc": cout << termino  <<  ‘\t’  <<  InformacionTermino  <<  endl;  .  Si  no  existe  no  se muestra nada
         void ListarDocs() const;  //  Mostrar  por  pantalla  el  contenido  el  contenido  del  campo  privado "indiceDocs": cout << nomDoc << ‘\t’ << InfDoc << endl;
         bool ListarDocs(const string& nomDoc) const;  // Devuelve true si nomDoc existe en la colección y muestra por pantalla el contenido del campo privado "indiceDocs" para el documento con nombre "nomDoc": cout << nomDoc << ‘\t’ << InfDoc << endl; . Si no existe no se muestra nada
-    private:
+    protected:
         IndexadorHash();  // Este constructor se pone en la parte privada porque no se permitirá crear un indexador sin inicializarlo convenientemente. La inicialización la decidirá el alumno
         bool almacenarStopWords(const string& fichStopWords);
         bool indexarDocumento(const string& doc);   //Mia
