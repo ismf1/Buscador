@@ -38,7 +38,10 @@ privada "formSimilitud" con valor 0 y las constantes de cada modelo:
 "c = 2;  k1 = 1.2; b = 0.75"
 */
 Buscador::Buscador(){
-    
+    k1 = 1.2;
+    b = 0.75;
+    c = 2;
+    formSimilitud = 0;
 }
 
 /* 
@@ -52,12 +55,19 @@ excepción correspondiente y se continuará la ejecución del programa mantenien
 Inicializará  la  variable  privada  "formSimilitud"  a  "f"  y  las constantes de
 cada modelo: "c = 2;  k1 = 1.2;  b = 0.75;"
 */
-Buscador::Buscador(const string& directorioIndexacion, const int& f){
-
+Buscador::Buscador(const string& directorioIndexacion, const int& f):IndexadorHash(directorioIndexacion){
+    formSimilitud = f;
+    c = 2;
+    k1 = 1.2;
+    b = 0.75;
 }
 
-Buscador::Buscador(const Buscador& buscador){
-    
+Buscador::Buscador(const Buscador& buscador):IndexadorHash(buscador){
+    docsOrdenados = buscador.docsOrdenados; //FALTA REVISAR
+    formSimilitud = buscador.formSimilitud; 
+    c = buscador.c; 
+    k1 = buscador.k1;
+    b = buscador.b;
 }
 
 Buscador::~Buscador(){
@@ -69,7 +79,12 @@ alguno  de  los  términos  de  la  pregunta  (tras  eliminar  las palabras de p
 */
 Buscador&
 Buscador::operator= (const Buscador& buscador){
-    
+    IndexadorHash::operator=(buscador); //FALTA REVISAR
+    docsOrdenados = buscador.docsOrdenados; //FALTA REVISAR
+    formSimilitud = buscador.formSimilitud; 
+    c = buscador.c; 
+    k1 = buscador.k1;
+    b = buscador.b;
 }
 
 /* Devuelve true si en IndexadorHash.pregunta hay indexada una pregunta no  vacía
@@ -180,7 +195,7 @@ Buscador::ImprimirResultadoBusqueda(const  int&  numDocumentos,  const  string& 
 
 int 
 Buscador::DevolverFormulaSimilitud() const{
-    
+    return formSimilitud;
 }
 
 /*  Cambia  el  valor  de  "formSimilitud"  a  "f"  si  contiene  un  valor 
@@ -191,29 +206,36 @@ el valor anterior de "formSimilitud"
 */
 bool 
 Buscador::CambiarFormulaSimilitud(const int& f){
-    
+    if (f==0 || f==1){
+        formSimilitud = f;
+        return true;
+    }else{
+        return false;
+    }
 }
 
 // Cambia el valor de "c = kc"
 void 
 Buscador::CambiarParametrosDFR(const double& kc){
-    
+    c = kc;
 }
 
 // Devuelve el valor de "c"
 double 
 Buscador::DevolverParametrosDFR() const{
-    
+    return c;
 }
 
 // Cambia el valor de "k1 = kk1; b = kb;"
 void 
 Buscador::CambiarParametrosBM25(const double& kk1, const double& kb){
-    
+    k1 = kk1;
+    b = kb;
 }
 
 // Devuelve el valor de "k1" y "b"
 void 
 Buscador::DevolverParametrosBM25(double& kk1, double& kb) const{
-    
+    kk1 = k1;
+    kb = b;
 }
