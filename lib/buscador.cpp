@@ -1,4 +1,5 @@
 #include "buscador.h"
+#include <math.h>
 
 
 //##################### RESULTADO RI ########################################
@@ -108,7 +109,33 @@ a 99999)
 */
 bool
 Buscador::Buscar(const int& numDocumentos){
-    
+    //Vector de documentos ordenados por id
+    vector<int> resultados(informacionColeccionDocs.getNumDocs(),0);
+    //vector<int> valoresComunes();   //avgdl , 
+
+    //Calcula los valores comunes en funcion de la funcion de similitud, el resto devuelve -1
+    //calcularValoresComunes(...);
+    //Idea: Poner valores en un vector para luego pasar unicamente el puntero del vector a la funcion
+
+    int idf;
+    int avgdl = calcAvgdl();
+
+    //Para cada palabra
+    for(unordered_map<string, InformacionTerminoPregunta>::const_iterator itPal = indicePregunta.begin() ; itPal!=indicePregunta.end() ; itPal++){
+        InformacionTermino infTerm = indice[itPal->first];
+
+        unordered_map<long int, InfTermDoc> l_docs = infTerm.getL_docs();
+        int n = l_docs.size();
+        //vector<int> valoresPalabra();
+        //calcularValoresPalabra(...);
+        //Para cada termino con la palabra indexada
+        
+        idf = calcIdf(n);   //FALTA -> Hacer solo si se trata de BM25
+
+        for(unordered_map<long int, InfTermDoc>::const_iterator itDoc = l_docs.begin() ; itDoc != l_docs.end() ; itDoc++){
+            resultados[itDoc->first] += similitudPalabraDoc(avgdl,idf,infTerm,itDoc);
+        }
+    }
 }
 
 /* Realizará la búsqueda entre el número de pregunta "numPregInicio" y "numPregFin", 
@@ -238,4 +265,44 @@ void
 Buscador::DevolverParametrosBM25(double& kk1, double& kb) const{
     kk1 = k1;
     kb = b;
+}
+
+int
+Buscador::calcIdf(const int n) const{
+    int N = informacionColeccionDocs.getNumDocs();
+
+    int num = N - n + 0.5;
+    int den = n + 0.5;
+    return log(num/den);
+}
+
+int
+Buscador::calcAvgdl() const{
+    //FALTA
+}
+
+int
+Buscador::similitudPalabraDoc(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc){
+    if(formSimilitud==0){
+        //FALTA
+    }else{
+        return BM25(avgdl,idf,infTerm,itDoc);
+    }
+}
+
+int
+Buscador::BM25(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc){
+    //FALTA
+
+    //Buscamos el documento
+    InfDoc doc;
+    for(){
+
+    }
+
+    int f = itDoc->second.getFt();
+    int D = doc.getNumPalSinParada();
+    int N = informacionColeccionDocs.getNumDocs();
+
+    //Ecuacion
 }
