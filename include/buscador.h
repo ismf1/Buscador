@@ -63,8 +63,11 @@ class Buscador: public IndexadorHash {
         Buscador();
         int calcIdf(const int n) const;
         int calcAvgdl() const;
-        int similitudPalabraDoc(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs);
+        int similitudPalabraDoc(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+                                int ft,int lambda_t,int wiq,int logwid0,int logwid1);
         int BM25(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs);
+        int DFR(int avgdl,int ft,int lambda_t,int wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+                int logwid0,int logwid1,const InformacionTermino &infTerm);
 
         priority_queue< ResultadoRI > docsOrdenados;
         int formSimilitud; // 0: DFR, 1: BM25

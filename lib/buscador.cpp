@@ -132,6 +132,10 @@ Buscador::Buscar(const int& numDocumentos){
 
     int idf;
     int avgdl = calcAvgdl();
+    int lambda_t;
+    int ft;
+    int wiq;
+    int logwid0,logwid1;
 
     //Para cada palabra
     for(unordered_map<string, InformacionTerminoPregunta>::const_iterator itPal = indicePregunta.begin() ; itPal!=indicePregunta.end() ; itPal++){
@@ -143,10 +147,17 @@ Buscador::Buscar(const int& numDocumentos){
         //calcularValoresPalabra(...);
         //Para cada termino con la palabra indexada
         
+        //FALTA LIMPIAR:
         idf = calcIdf(n);   //FALTA -> Hacer solo si se trata de BM25
+        ft = infTerm.getFtc();  //FALTA -> Hacer solo si se trata de DFR
+        lambda_t = ft/informacionColeccionDocs.getNumDocs();  //FALTA -> Hacer solo si se trata de DFR
+        wiq = itPal->second.getFt()/infPregunta.getNumTotalPalSinParada();  //FALTA -> Hacer solo si se trata de DFR
+        logwid0 = log2(1+lambda_t);  //FALTA -> Hacer solo si se trata de DFR
+        logwid1 = log2((1+lambda_t)/lambda_t);  //FALTA -> Hacer solo si se trata de DFR
 
         for(unordered_map<long int, InfTermDoc>::const_iterator itDoc = l_docs.begin() ; itDoc != l_docs.end() ; itDoc++){
-            resultados[itDoc->first] += similitudPalabraDoc(avgdl,idf,infTerm,itDoc,namesDocs);
+            resultados[itDoc->first] += similitudPalabraDoc(avgdl,idf,infTerm,itDoc,namesDocs,
+                                                            ft,lambda_t,wiq,logwid0,logwid1);
         }
     }
 }
@@ -295,12 +306,30 @@ Buscador::calcAvgdl() const{
 }
 
 int
-Buscador::similitudPalabraDoc(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs){
+Buscador::similitudPalabraDoc(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+                                int ft,int lambda_t,int wiq, int logwid0,int logwid1){
     if(formSimilitud==0){
         //FALTA
+        return DFR(avgdl,ft,lambda_t,wiq,itDoc,namesDocs,logwid0,logwid1,infTerm);
     }else{
         return BM25(avgdl,idf,infTerm,itDoc,namesDocs);
     }
+}
+
+int
+Buscador::DFR(int avgdl,int ft,int lambda_t,int wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+                int logwid0,int logwid1,const InformacionTermino &infTerm){
+    int ftd = itDoc->second.getFt();
+    int ld = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
+    int ftd2 = ftd * log2((1+(c*avgdl))/ld);
+    int ft = infTerm.getFtc();
+    int nt = infTerm.getL_docs().size();
+
+    int wid0 = logwid0 + ftd2 * logwid1;
+    int wid1 = (ft+1)/(nt*(ftd2+1));
+    int wid = wid0 * wid1;
+
+    return wid * wiq;
 }
 
 int
