@@ -88,6 +88,7 @@ Buscador::operator= (const Buscador& buscador){
     b = buscador.b;
 }
 
+//FALTA RETURN FALSE
 bool
 Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
     int maxId=-1;
@@ -142,11 +143,6 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
         }
     }
 
-    //Vaciamos docsOrdenados
-    while(!docsOrdenados.empty()){
-        docsOrdenados.pop();
-    }
-
     //Actualizamos docsOrdenados
     for(int i=0;i<resultados.size();i++){
         if(resultados[i]!=0){
@@ -161,6 +157,8 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
     while(docsOrdenados.size()>numDocumentos){
         docsOrdenados.pop();
     }
+
+    return true;
 }
 
 /* Devuelve true si en IndexadorHash.pregunta hay indexada una pregunta no  vacía
@@ -184,6 +182,10 @@ a 99999)
 */
 bool
 Buscador::Buscar(const int& numDocumentos){
+    //Vaciamos docsOrdenados
+    while(!docsOrdenados.empty()){
+        docsOrdenados.pop();
+    }
     return Buscar(numDocumentos,0);
 }
 
@@ -211,7 +213,39 @@ pregunta y término en el que se ha quedado.
 */
 bool  
 Buscador::Buscar(const  string&  dirPreguntas,  const  int&  numDocumentos,  const int& numPregInicio, const int& numPregFin){
-    
+    ifstream iFile;
+    string nameFile;
+    string cadAux;
+    string preguntaLocal;
+    for(int i=numPregInicio;i<numPregFin;i++){
+        nameFile = dirPreguntas + "/" + to_string(i) + ".txt";
+
+        iFile.open(nameFile.c_str());
+
+        if(!iFile) {
+            //FALTA COMPROBAR CONTROL ERROR
+            cerr << "ERROR: No existe el archivo: " << nameFile << endl;
+            return false;
+        }else{
+            preguntaLocal = "";
+            while(!iFile.eof()) {
+                getline(iFile, cadAux);
+                preguntaLocal+=cadAux + '\n';
+            }
+            iFile.close();
+
+            IndexarPregunta(preguntaLocal);
+
+            //Vaciamos docsOrdenados
+            while(!docsOrdenados.empty()){
+                docsOrdenados.pop();
+            }
+            
+            Buscar(numDocumentos,i);    //FALTA CONTROL ERRORES (return false)
+        }
+        
+    }
+    return true;
 }
 
 /*  Imprimirá  por  pantalla  los  resultados  de  la  última  búsqueda  
