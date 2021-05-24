@@ -1,6 +1,7 @@
 #include "buscador.h"
 #include <math.h>
 
+using namespace std;
 
 //##################### RESULTADO RI ########################################
 ResultadoRI::ResultadoRI(const double& kvSimilitud, const long int& kidDoc, const int& np) {
@@ -12,6 +13,11 @@ ResultadoRI::ResultadoRI(const double& kvSimilitud, const long int& kidDoc, cons
 double
 ResultadoRI::VSimilitud() const {
     return vSimilitud;
+}
+
+int
+ResultadoRI::NumPregunta() const{
+    return numPregunta;
 }
 
 long int ResultadoRI::IdDoc() const {
@@ -98,7 +104,7 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
         }
     }
 
-    vector<string> namesDocs(maxId);
+    namesDocs.resize(maxId);
 
     for(unordered_map<string, InfDoc>::const_iterator it=indiceDocs.begin();it!=indiceDocs.end();it++){
         namesDocs[it->second.getIdDoc()] = it->first;
@@ -290,7 +296,7 @@ para  obtener  los  datos  de  precisión  y cobertura
 */
 void 
 Buscador::ImprimirResultadoBusqueda(const int& numDocumentos) const{
-    
+    ImprimirResultadoBusqueda(numDocumentos,cout);
 }
 
 /* Lo mismo que "ImprimirResultadoBusqueda()" pero guardando la salida en el fichero 
@@ -300,7 +306,57 @@ de nombre "nombreFichero"
 */
 bool  
 Buscador::ImprimirResultadoBusqueda(const  int&  numDocumentos,  const  string& nombreFichero) const{
-    
+    ofstream oFile;
+    oFile.open(nombreFichero);
+
+    if(!oFile){
+        //FALTA ERROR
+        return false;
+    }else{
+        ImprimirResultadoBusqueda(numDocumentos,oFile);
+        oFile.close();
+    }
+
+    return true;
+}
+
+void
+Buscador::ImprimirResultadoBusqueda(const int& numDocumentos, ostream& os) const{
+    priority_queue< ResultadoRI > docsOrdenadosLocal = docsOrdenados;   //FALTA COMPROBAR
+    int pregAnt=-1;
+    int i=0;
+    string preguntaIndexada="";
+    string formSimilitudStr="";
+    if(formSimilitud==0){
+        formSimilitudStr="DFR";
+    }else{
+        formSimilitudStr="BM25";
+    }
+
+    while(!docsOrdenados.empty()){
+        ResultadoRI ri(docsOrdenadosLocal.top());
+        docsOrdenadosLocal.pop();
+
+        if(i<numDocumentos){
+            if(ri.NumPregunta()==0){
+                preguntaIndexada = pregunta;
+            }else{
+                preguntaIndexada = "ConjuntoDePreguntas";
+            }
+
+            //NumPregunta  FormulaSimilitud  NomDocumento  Posicion  PuntuacionDoc PreguntaIndexada
+            os << ri.NumPregunta() << " " << formSimilitudStr << " " << namesDocs[ri.IdDoc()] << " "
+            << i << " " << ri.VSimilitud() << " " << preguntaIndexada << "\n";
+        }
+
+        if(pregAnt == ri.NumPregunta()){
+            i++;
+        }else{
+            pregAnt = ri.NumPregunta();
+            i=0;
+        }
+
+    }
 }
 
 // Devuelve el valor del campo privado "formSimilitud"

@@ -10,6 +10,7 @@ public:
     double VSimilitud() const;
     long int IdDoc() const;
     bool operator< (const ResultadoRI& lhs) const; 
+    int NumPregunta() const;
 private:
     double vSimilitud;
     long int idDoc; 
@@ -63,6 +64,7 @@ class Buscador: public IndexadorHash {
         
     private:
         Buscador();
+        void ImprimirResultadoBusqueda(const int& numDocumentos, ostream& os) const;
         double calcIdf(const int n) const;
         double similitudPalabraDoc(double avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
                                 int ft,double lambda_t,double wiq, double logwid0,double logwid1);
@@ -75,4 +77,5 @@ class Buscador: public IndexadorHash {
         double c; // Constante del modelo DFR
         double k1; // Constante del modelo BM25
         double b; // Constante del modelo BM25
+        vector<string> namesDocs;
 };
