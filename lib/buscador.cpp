@@ -131,7 +131,7 @@ Buscador::Buscar(const int& numDocumentos){
     //Idea: Poner valores en un vector para luego pasar unicamente el puntero del vector a la funcion
 
     int idf;
-    int avgdl = calcAvgdl();
+    int avgdl = informacionColeccionDocs.getNumTotalPalSinParada()/informacionColeccionDocs.getNumDocs();
     int lambda_t;
     int ft;
     int wiq;
@@ -160,6 +160,8 @@ Buscador::Buscar(const int& numDocumentos){
                                                             ft,lambda_t,wiq,logwid0,logwid1);
         }
     }
+
+    //FALTA -> Crear ResultadosRI, ordenarlos en docsOrdenados y cortar por numDocumentos
 }
 
 /* Realizará la búsqueda entre el número de pregunta "numPregInicio" y "numPregFin", 
@@ -301,15 +303,9 @@ Buscador::calcIdf(const int n) const{
 }
 
 int
-Buscador::calcAvgdl() const{
-    //FALTA
-}
-
-int
 Buscador::similitudPalabraDoc(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
                                 int ft,int lambda_t,int wiq, int logwid0,int logwid1){
     if(formSimilitud==0){
-        //FALTA
         return DFR(avgdl,ft,lambda_t,wiq,itDoc,namesDocs,logwid0,logwid1,infTerm);
     }else{
         return BM25(avgdl,idf,infTerm,itDoc,namesDocs);
