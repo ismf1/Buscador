@@ -109,6 +109,19 @@ a 99999)
 */
 bool
 Buscador::Buscar(const int& numDocumentos){
+    int maxId=-1;
+    for(unordered_map<string, InfDoc>::const_iterator it=indiceDocs.begin();it!=indiceDocs.end();it++){
+        if(it->second.getIdDoc()>maxId){
+            maxId=it->second.getIdDoc();
+        }
+    }
+
+    vector<string> namesDocs(maxId);
+
+    for(unordered_map<string, InfDoc>::const_iterator it=indiceDocs.begin();it!=indiceDocs.end();it++){
+        namesDocs[it->second.getIdDoc()] = it->first;
+    }
+
     //Vector de documentos ordenados por id
     vector<int> resultados(informacionColeccionDocs.getNumDocs(),0);
     //vector<int> valoresComunes();   //avgdl , 
@@ -133,7 +146,7 @@ Buscador::Buscar(const int& numDocumentos){
         idf = calcIdf(n);   //FALTA -> Hacer solo si se trata de BM25
 
         for(unordered_map<long int, InfTermDoc>::const_iterator itDoc = l_docs.begin() ; itDoc != l_docs.end() ; itDoc++){
-            resultados[itDoc->first] += similitudPalabraDoc(avgdl,idf,infTerm,itDoc);
+            resultados[itDoc->first] += similitudPalabraDoc(avgdl,idf,infTerm,itDoc,namesDocs);
         }
     }
 }
@@ -282,26 +295,20 @@ Buscador::calcAvgdl() const{
 }
 
 int
-Buscador::similitudPalabraDoc(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc){
+Buscador::similitudPalabraDoc(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs){
     if(formSimilitud==0){
         //FALTA
     }else{
-        return BM25(avgdl,idf,infTerm,itDoc);
+        return BM25(avgdl,idf,infTerm,itDoc,namesDocs);
     }
 }
 
 int
-Buscador::BM25(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc){
+Buscador::BM25(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs){
     //FALTA
 
-    //Buscamos el documento
-    InfDoc doc;
-    for(){
-
-    }
-
     int f = itDoc->second.getFt();
-    int D = doc.getNumPalSinParada();
+    int D = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
     int N = informacionColeccionDocs.getNumDocs();
 
     //Ecuacion
