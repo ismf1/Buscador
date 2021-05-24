@@ -305,11 +305,13 @@ Buscador::similitudPalabraDoc(int avgdl,int idf,const InformacionTermino &infTer
 
 int
 Buscador::BM25(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs){
-    //FALTA
-
     int f = itDoc->second.getFt();
     int D = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
     int N = informacionColeccionDocs.getNumDocs();
 
     //Ecuacion
+    int num = f*(k1+1);
+    int den = f+k1*(1-b+b*(D/avgdl));
+
+    return idf*num/den;
 }
