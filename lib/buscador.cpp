@@ -152,7 +152,7 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
         }
     }
 
-    //FALTA COMPROBAR
+    //FALTA COMPROBAR SI SE ESTAN FILTRANDO LOS MAS IMPORTANTES O LOS MENOS
     //Filtramos docsOrdenados
     while(docsOrdenados.size()>numDocumentos){
         docsOrdenados.pop();
@@ -255,7 +255,9 @@ por  cada  pregunta,  entre  los  que  tienen  algún  término  de  la pregunta
 los  cuales  estarán  almacenados  en  la  variable  privada "docsOrdenados"  en  
 orden  decreciente  según  la  relevancia  sobre  la pregunta, en el siguiente 
 formato (una línea por cada documento):  
+
 NumPregunta  FormulaSimilitud  NomDocumento  Posicion  PuntuacionDoc PreguntaIndexada
+
 */
 /* Donde:     
 NumPregunta  sería  el  número  de  pregunta  almacenado  en "ResultadoRI.numPregunta" 
