@@ -145,7 +145,7 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
 
         for(unordered_map<long int, InfTermDoc>::const_iterator itDoc = l_docs.begin() ; itDoc != l_docs.end() ; itDoc++){
             resultados[itDoc->first] += similitudPalabraDoc(avgdl,idf,infTerm,itDoc,namesDocs,
-                                                            ft,lambda_t,wiq,logwid0,logwid1);
+                                                            lambda_t,wiq,logwid0,logwid1);
         }
     }
 
@@ -419,16 +419,16 @@ Buscador::calcIdf(const int n) const{
 
 double
 Buscador::similitudPalabraDoc(double avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
-                                int ft,double lambda_t,double wiq, double logwid0,double logwid1){
+                                double lambda_t,double wiq, double logwid0,double logwid1){
     if(formSimilitud==0){
-        return DFR(avgdl,ft,lambda_t,wiq,itDoc,namesDocs,logwid0,logwid1,infTerm);
+        return DFR(avgdl,lambda_t,wiq,itDoc,namesDocs,logwid0,logwid1,infTerm);
     }else{
         return BM25(avgdl,idf,infTerm,itDoc,namesDocs);
     }
 }
 
 double
-Buscador::DFR(double avgdl,int ft,double lambda_t,double wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+Buscador::DFR(double avgdl,double lambda_t,double wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
                 double logwid0,double logwid1,const InformacionTermino &infTerm){
     int ftd = itDoc->second.getFt();
     int ld = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();

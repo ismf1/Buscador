@@ -67,9 +67,9 @@ class Buscador: public IndexadorHash {
         void ImprimirResultadoBusqueda(const int& numDocumentos, ostream& os) const;
         double calcIdf(const int n) const;
         double similitudPalabraDoc(double avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
-                                int ft,double lambda_t,double wiq, double logwid0,double logwid1);
+                                double lambda_t,double wiq, double logwid0,double logwid1);
         double BM25(double avgdl,double idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs);
-        double DFR(double avgdl,int ft,double lambda_t,double wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+        double DFR(double avgdl,double lambda_t,double wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
                 double logwid0,double logwid1,const InformacionTermino &infTerm);
 
         priority_queue< ResultadoRI > docsOrdenados;
