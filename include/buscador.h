@@ -36,6 +36,8 @@ class Buscador: public IndexadorHash {
         
         bool Buscar(const int& numDocumentos = 99999);
 
+        bool Buscar(const int& numDocumentos,const int& nPregunta);
+
         bool  Buscar(const  string&  dirPreguntas,  const  int&  numDocumentos,  const int& numPregInicio, const int& numPregFin);
 
         void ImprimirResultadoBusqueda(const int& numDocumentos = 99999) const;
@@ -61,12 +63,12 @@ class Buscador: public IndexadorHash {
         
     private:
         Buscador();
-        int calcIdf(const int n) const;
-        int similitudPalabraDoc(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
-                                int ft,int lambda_t,int wiq,int logwid0,int logwid1);
-        int BM25(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs);
-        int DFR(int avgdl,int ft,int lambda_t,int wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
-                int logwid0,int logwid1,const InformacionTermino &infTerm);
+        double calcIdf(const int n) const;
+        double similitudPalabraDoc(double avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+                                int ft,double lambda_t,double wiq, double logwid0,double logwid1);
+        double BM25(double avgdl,double idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs);
+        double DFR(double avgdl,int ft,double lambda_t,double wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+                double logwid0,double logwid1,const InformacionTermino &infTerm);
 
         priority_queue< ResultadoRI > docsOrdenados;
         int formSimilitud; // 0: DFR, 1: BM25

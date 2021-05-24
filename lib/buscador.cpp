@@ -88,27 +88,8 @@ Buscador::operator= (const Buscador& buscador){
     b = buscador.b;
 }
 
-/* Devuelve true si en IndexadorHash.pregunta hay indexada una pregunta no  vacía
-con  algún  término  con  contenido,  y  si  sobre  esa  pregunta  se finaliza la
-búsqueda correctamente con la fórmula de similitud indicada en la variable privada
-"formSimilitud". 
-*/
-/* Por ejemplo, devuelve falso si no finaliza la búsqueda por falta de memoria,
-mostrando el mensaje de error correspondiente, e indicando el documento y término
-en el que se ha quedado.
-*/
-/* Se guardarán los primeros "numDocumentos" documentos más relevantes en  la
-variable  privada  "docsOrdenados"  en  orden  decreciente  según  la relevancia
-sobre  la  pregunta  (se  vaciará  previamente  el  contenido  de esta  variable
-antes  de  realizar  la  búsqueda).  Se  almacenarán  solo  los documentos  que
-compartan  algún  término  (no  de  parada)  con  la  query (aunque ese número de
-documentos sea inferior a "numDocumentos"). Como número de pregunta en
-"ResultadoRI.numPregunta" se almacenará el valor 0.  En  caso  de  que  no  se
-introduzca  el  parámetro  "numDocumentos", entonces dicho parámetro se inicializará
-a 99999)
-*/
 bool
-Buscador::Buscar(const int& numDocumentos){
+Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
     int maxId=-1;
     for(unordered_map<string, InfDoc>::const_iterator it=indiceDocs.begin();it!=indiceDocs.end();it++){
         if(it->second.getIdDoc()>maxId){
@@ -130,12 +111,12 @@ Buscador::Buscar(const int& numDocumentos){
     //calcularValoresComunes(...);
     //Idea: Poner valores en un vector para luego pasar unicamente el puntero del vector a la funcion
 
-    int idf;
-    int avgdl = informacionColeccionDocs.getNumTotalPalSinParada()/informacionColeccionDocs.getNumDocs();
-    int lambda_t;
+    double idf;
+    double avgdl = informacionColeccionDocs.getNumTotalPalSinParada()/informacionColeccionDocs.getNumDocs();
+    double lambda_t;
     int ft;
-    int wiq;
-    int logwid0,logwid1;
+    double wiq;
+    double logwid0,logwid1;
 
     //Para cada palabra
     for(unordered_map<string, InformacionTerminoPregunta>::const_iterator itPal = indicePregunta.begin() ; itPal!=indicePregunta.end() ; itPal++){
@@ -161,7 +142,49 @@ Buscador::Buscar(const int& numDocumentos){
         }
     }
 
-    //FALTA -> Crear ResultadosRI, ordenarlos en docsOrdenados y cortar por numDocumentos
+    //Vaciamos docsOrdenados
+    while(!docsOrdenados.empty()){
+        docsOrdenados.pop();
+    }
+
+    //Actualizamos docsOrdenados
+    for(int i=0;i<resultados.size();i++){
+        if(resultados[i]!=0){
+            ResultadoRI ri(resultados[i], i, nPregunta);
+
+            docsOrdenados.push(ri);
+        }
+    }
+
+    //FALTA COMPROBAR
+    //Filtramos docsOrdenados
+    while(docsOrdenados.size()>numDocumentos){
+        docsOrdenados.pop();
+    }
+}
+
+/* Devuelve true si en IndexadorHash.pregunta hay indexada una pregunta no  vacía
+con  algún  término  con  contenido,  y  si  sobre  esa  pregunta  se finaliza la
+búsqueda correctamente con la fórmula de similitud indicada en la variable privada
+"formSimilitud". 
+*/
+/* Por ejemplo, devuelve falso si no finaliza la búsqueda por falta de memoria,
+mostrando el mensaje de error correspondiente, e indicando el documento y término
+en el que se ha quedado.
+*/
+/* Se guardarán los primeros "numDocumentos" documentos más relevantes en  la
+variable  privada  "docsOrdenados"  en  orden  decreciente  según  la relevancia
+sobre  la  pregunta  (se  vaciará  previamente  el  contenido  de esta  variable
+antes  de  realizar  la  búsqueda).  Se  almacenarán  solo  los documentos  que
+compartan  algún  término  (no  de  parada)  con  la  query (aunque ese número de
+documentos sea inferior a "numDocumentos"). Como número de pregunta en
+"ResultadoRI.numPregunta" se almacenará el valor 0.  En  caso  de  que  no  se
+introduzca  el  parámetro  "numDocumentos", entonces dicho parámetro se inicializará
+a 99999)
+*/
+bool
+Buscador::Buscar(const int& numDocumentos){
+    return Buscar(numDocumentos,0);
 }
 
 /* Realizará la búsqueda entre el número de pregunta "numPregInicio" y "numPregFin", 
@@ -293,7 +316,7 @@ Buscador::DevolverParametrosBM25(double& kk1, double& kb) const{
     kb = b;
 }
 
-int
+double
 Buscador::calcIdf(const int n) const{
     int N = informacionColeccionDocs.getNumDocs();
 
@@ -302,9 +325,9 @@ Buscador::calcIdf(const int n) const{
     return log(num/den);
 }
 
-int
-Buscador::similitudPalabraDoc(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
-                                int ft,int lambda_t,int wiq, int logwid0,int logwid1){
+double
+Buscador::similitudPalabraDoc(double avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+                                int ft,double lambda_t,double wiq, double logwid0,double logwid1){
     if(formSimilitud==0){
         return DFR(avgdl,ft,lambda_t,wiq,itDoc,namesDocs,logwid0,logwid1,infTerm);
     }else{
@@ -312,9 +335,9 @@ Buscador::similitudPalabraDoc(int avgdl,int idf,const InformacionTermino &infTer
     }
 }
 
-int
-Buscador::DFR(int avgdl,int ft,int lambda_t,int wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
-                int logwid0,int logwid1,const InformacionTermino &infTerm){
+double
+Buscador::DFR(double avgdl,int ft,double lambda_t,double wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+                double logwid0,double logwid1,const InformacionTermino &infTerm){
     int ftd = itDoc->second.getFt();
     int ld = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
     int ftd2 = ftd * log2((1+(c*avgdl))/ld);
@@ -328,8 +351,8 @@ Buscador::DFR(int avgdl,int ft,int lambda_t,int wiq,unordered_map<long int, InfT
     return wid * wiq;
 }
 
-int
-Buscador::BM25(int avgdl,int idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs){
+double
+Buscador::BM25(double avgdl,double idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs){
     int f = itDoc->second.getFt();
     int D = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
     int N = informacionColeccionDocs.getNumDocs();
