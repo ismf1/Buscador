@@ -236,6 +236,11 @@ Buscador::Buscar(const  string&  dirPreguntas,  const  int&  numDocumentos,  con
     string nameFile;
     string cadAux;
     string preguntaLocal;
+
+    //Vaciamos docsOrdenados
+    while(!docsOrdenados.empty()){
+        docsOrdenados.pop();
+    }
     for(int i=numPregInicio;i<numPregFin;i++){
         nameFile = dirPreguntas + "/" + to_string(i) + ".txt";
 
@@ -254,11 +259,6 @@ Buscador::Buscar(const  string&  dirPreguntas,  const  int&  numDocumentos,  con
             iFile.close();
 
             IndexarPregunta(preguntaLocal);
-
-            //Vaciamos docsOrdenados
-            while(!docsOrdenados.empty()){
-                docsOrdenados.pop();
-            }
             
             Buscar(numDocumentos,i);    //FALTA CONTROL ERRORES (return false)
         }
