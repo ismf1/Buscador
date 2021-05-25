@@ -72,7 +72,7 @@ class Buscador: public IndexadorHash {
         double DFR(double avgdl,double lambda_t,double wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
                 double logwid0,double logwid1,const InformacionTermino &infTerm);
 
-        priority_queue< ResultadoRI > docsOrdenados;
+        list< ResultadoRI > docsOrdenados;
         int formSimilitud; // 0: DFR, 1: BM25
         double c; // Constante del modelo DFR
         double k1; // Constante del modelo BM25

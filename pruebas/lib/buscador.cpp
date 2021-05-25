@@ -32,7 +32,7 @@ bool ResultadoRI::operator< (const ResultadoRI& lhs) const {
 }
 
 ostream& operator<<(ostream &os, const ResultadoRI &res){
-    os << res.vSimilitud << "\t\t" << res.idDoc << "\t" << res.numPregunta << endl;
+    os << res.vSimilitud << "\t\t" << res.idDoc << "\t" << res.numPregunta << "\n";
     return os;
 }
 
@@ -172,7 +172,7 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
     //FALTA COMPROBAR SI SE ESTAN FILTRANDO LOS MAS IMPORTANTES O LOS MENOS
     //Filtramos docsOrdenados
     for(int i=0;i<numDocumentos && !docsOrdenadosTot.empty() ; i++){
-        docsOrdenados.push(docsOrdenadosTot.top());
+        docsOrdenados.push_back(docsOrdenadosTot.top());
         docsOrdenadosTot.pop();
     }
 
@@ -201,9 +201,7 @@ a 99999)
 bool
 Buscador::Buscar(const int& numDocumentos){
     //Vaciamos docsOrdenados
-    while(!docsOrdenados.empty()){
-        docsOrdenados.pop();
-    }
+    docsOrdenados.clear();
     
     return Buscar(numDocumentos,0);
 }
@@ -236,6 +234,10 @@ Buscador::Buscar(const  string&  dirPreguntas,  const  int&  numDocumentos,  con
     string nameFile;
     string cadAux;
     string preguntaLocal;
+
+    //Vaciamos docsOrdenados
+    docsOrdenados.clear();
+
     for(int i=numPregInicio;i<numPregFin;i++){
         nameFile = dirPreguntas + "/" + to_string(i) + ".txt";
 
@@ -243,7 +245,7 @@ Buscador::Buscar(const  string&  dirPreguntas,  const  int&  numDocumentos,  con
 
         if(!iFile) {
             //FALTA COMPROBAR CONTROL ERROR
-            cerr << "ERROR: No existe el archivo: " << nameFile << endl;
+            cerr << "ERROR: No existe el archivo: " << nameFile << "\n";
             return false;
         }else{
             preguntaLocal = "";
@@ -254,11 +256,6 @@ Buscador::Buscar(const  string&  dirPreguntas,  const  int&  numDocumentos,  con
             iFile.close();
 
             IndexarPregunta(preguntaLocal);
-
-            //Vaciamos docsOrdenados
-            while(!docsOrdenados.empty()){
-                docsOrdenados.pop();
-            }
             
             Buscar(numDocumentos,i);    //FALTA CONTROL ERRORES (return false)
         }
@@ -335,7 +332,6 @@ Buscador::ImprimirResultadoBusqueda(const  int&  numDocumentos,  const  string& 
 
 void
 Buscador::ImprimirResultadoBusqueda(const int& numDocumentos, ostream& os) const{
-    priority_queue< ResultadoRI > docsOrdenadosLocal = docsOrdenados;   //FALTA COMPROBAR
     int pregAnt=-1;
     int i=0;
     string preguntaIndexada="";
@@ -346,26 +342,24 @@ Buscador::ImprimirResultadoBusqueda(const int& numDocumentos, ostream& os) const
         formSimilitudStr="BM25";
     }
 
-    while(!docsOrdenadosLocal.empty()){
-        ResultadoRI ri(docsOrdenadosLocal.top());
-        docsOrdenadosLocal.pop();
+    for(list<ResultadoRI>::const_iterator it=docsOrdenados.begin();it!=docsOrdenados.end();it++){
 
         if(i<numDocumentos){
-            if(ri.NumPregunta()==0){
+            if(it->NumPregunta()==0){
                 preguntaIndexada = pregunta;
             }else{
                 preguntaIndexada = "ConjuntoDePreguntas";
             }
 
             //NumPregunta  FormulaSimilitud  NomDocumento  Posicion  PuntuacionDoc PreguntaIndexada
-            os << ri.NumPregunta() << " " << formSimilitudStr << " " << namesDocs[ri.IdDoc()] << " "
-            << i << " " << ri.VSimilitud() << " " << preguntaIndexada << "\n";
+            os << it->NumPregunta() << " " << formSimilitudStr << " " << namesDocs[it->IdDoc()] << " "
+            << i << " " << it->VSimilitud() << " " << preguntaIndexada << "\n";
         }
 
-        if(pregAnt == ri.NumPregunta()){
+        if(pregAnt == it->NumPregunta()){
             i++;
         }else{
-            pregAnt = ri.NumPregunta();
+            pregAnt = it->NumPregunta();
             i=0;
         }
 
