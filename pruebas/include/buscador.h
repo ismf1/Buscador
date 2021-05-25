@@ -67,10 +67,10 @@ class Buscador: public IndexadorHash {
         void ImprimirResultadoBusqueda(const int& numDocumentos, ostream& os) const;
         double calcIdf(const int n) const;
         double similitudPalabraDoc(double avgdl,double idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
-                                double lambda_t,double wiq, double logwid0,double logwid1);
+                                double *DFR_values);
         double BM25(double avgdl,double idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs);
-        double DFR(double avgdl,double lambda_t,double wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
-                double logwid0,double logwid1,const InformacionTermino &infTerm);
+        double DFR(double avgdl,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+                    double *DFR_values,const InformacionTermino &infTerm);
 
         list< ResultadoRI > docsOrdenados;
         int formSimilitud; // 0: DFR, 1: BM25

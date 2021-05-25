@@ -125,6 +125,7 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
     double wiq=-1;
     double logwid0=-1;
     double logwid1=-1;
+    double DFR_values[4];
 
     //Para cada palabra
     for(unordered_map<string, InformacionTerminoPregunta>::const_iterator itPal = indicePregunta.begin() ; itPal!=indicePregunta.end() ; itPal++){
@@ -139,11 +140,10 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
         //FALTA LIMPIAR:
         if(formSimilitud == 0){
             //DFR
-            ft = infTerm.getFtc();
-            lambda_t = (double)ft/informacionColeccionDocs.getNumDocs();
-            wiq = (double)itPal->second.getFt()/infPregunta.getNumTotalPalSinParada();
-            logwid0 = log2(1+lambda_t);
-            logwid1 = log2((1+lambda_t)/lambda_t);
+            DFR_values[0] = (double)ft/informacionColeccionDocs.getNumDocs();    //lambda_t
+            DFR_values[1] = (double)itPal->second.getFt()/infPregunta.getNumTotalPalSinParada(); //wiq
+            DFR_values[2] = log2(1+lambda_t); //logwid0
+            DFR_values[3] = log2((1+lambda_t)/lambda_t); //logwid1
         }else{
             //BM25
             idf = calcIdf(n);
@@ -154,7 +154,7 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
         for(unordered_map<long int, InfTermDoc>::const_iterator itDoc = l_docs.begin() ; itDoc != l_docs.end() ; itDoc++){
 
             resultados[itDoc->first] += similitudPalabraDoc(avgdl,idf,infTerm,itDoc,namesDocs,
-                                                            lambda_t,wiq,logwid0,logwid1);
+                                                            &DFR_values[0]);
         }
     }
 
@@ -424,17 +424,17 @@ Buscador::calcIdf(const int n) const{
 
 double
 Buscador::similitudPalabraDoc(double avgdl,double idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
-                                double lambda_t,double wiq, double logwid0,double logwid1){
+                                double *DFR_values){
     if(formSimilitud==0){
-        return DFR(avgdl,lambda_t,wiq,itDoc,namesDocs,logwid0,logwid1,infTerm);
+        return DFR(avgdl,itDoc,namesDocs,&DFR_values[0],infTerm);
     }else{
         return BM25(avgdl,idf,infTerm,itDoc,namesDocs);
     }
 }
 
 double
-Buscador::DFR(double avgdl,double lambda_t,double wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
-                double logwid0,double logwid1,const InformacionTermino &infTerm){
+Buscador::DFR(double avgdl,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+                double* DFR_values,const InformacionTermino &infTerm){
     int ftd = itDoc->second.getFt();
     int ld = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
 
@@ -443,11 +443,11 @@ Buscador::DFR(double avgdl,double lambda_t,double wiq,unordered_map<long int, In
     int ft = infTerm.getFtc();
     int nt = infTerm.getL_docs().size();
     
-    double wid0 = logwid0 + ftd2 * logwid1;
+    double wid0 = DFR_values[2] + ftd2 * DFR_values[3];
     double wid1 = (double)(ft+1)/(nt*(ftd2+1));
     double wid = wid0 * wid1;
 
-    return wid * wiq;
+    return wid * DFR_values[1];
 }
 
 double
