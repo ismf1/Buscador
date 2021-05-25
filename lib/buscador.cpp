@@ -70,7 +70,7 @@ Buscador::Buscador(const string& directorioIndexacion, const int& f):IndexadorHa
 }
 
 Buscador::Buscador(const Buscador& buscador):IndexadorHash(buscador){
-    docsOrdenados = buscador.docsOrdenados; //FALTA REVISAR
+    docsOrdenados = buscador.docsOrdenados;
     formSimilitud = buscador.formSimilitud; 
     c = buscador.c; 
     k1 = buscador.k1;
@@ -87,7 +87,7 @@ alguno  de  los  términos  de  la  pregunta  (tras  eliminar  las palabras de p
 Buscador&
 Buscador::operator= (const Buscador& buscador){
     IndexadorHash::operator=(buscador); //FALTA REVISAR
-    docsOrdenados = buscador.docsOrdenados; //FALTA REVISAR
+    docsOrdenados = buscador.docsOrdenados;
     formSimilitud = buscador.formSimilitud; 
     c = buscador.c; 
     k1 = buscador.k1;
@@ -118,12 +118,13 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
     //calcularValoresComunes(...);
     //Idea: Poner valores en un vector para luego pasar unicamente el puntero del vector a la funcion
 
-    double idf;
+    double idf=-1;
     double avgdl = (double)informacionColeccionDocs.getNumTotalPalSinParada()/informacionColeccionDocs.getNumDocs();
-    double lambda_t;
-    int ft;
-    double wiq;
-    double logwid0,logwid1;
+    double lambda_t=-1;
+    int ft=-1;
+    double wiq=-1;
+    double logwid0=-1;
+    double logwid1=-1;
 
     //Para cada palabra
     for(unordered_map<string, InformacionTerminoPregunta>::const_iterator itPal = indicePregunta.begin() ; itPal!=indicePregunta.end() ; itPal++){
@@ -136,12 +137,19 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
         //Para cada termino con la palabra indexada
         
         //FALTA LIMPIAR:
-        idf = calcIdf(n);   //FALTA -> Hacer solo si se trata de BM25
-        ft = infTerm.getFtc();  //FALTA -> Hacer solo si se trata de DFR
-        lambda_t = (double)ft/informacionColeccionDocs.getNumDocs();  //FALTA -> Hacer solo si se trata de DFR
-        wiq = (double)itPal->second.getFt()/infPregunta.getNumTotalPalSinParada();  //FALTA -> Hacer solo si se trata de DFR
-        logwid0 = log2(1+lambda_t);  //FALTA -> Hacer solo si se trata de DFR
-        logwid1 = log2((1+lambda_t)/lambda_t);  //FALTA -> Hacer solo si se trata de DFR
+        if(formSimilitud == 0){
+            //DFR
+            ft = infTerm.getFtc();
+            lambda_t = (double)ft/informacionColeccionDocs.getNumDocs();
+            wiq = (double)itPal->second.getFt()/infPregunta.getNumTotalPalSinParada();
+            logwid0 = log2(1+lambda_t);
+            logwid1 = log2((1+lambda_t)/lambda_t);
+        }else{
+            //BM25
+            idf = calcIdf(n);
+        }
+        
+        
 
         for(unordered_map<long int, InfTermDoc>::const_iterator itDoc = l_docs.begin() ; itDoc != l_docs.end() ; itDoc++){
 
