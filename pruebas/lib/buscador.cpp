@@ -107,9 +107,7 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
     namesDocs.resize(maxId+1);
     
     for(unordered_map<string, InfDoc>::const_iterator it=indiceDocs.begin();it!=indiceDocs.end();it++){
-        //cout << "01: " << it->first << " id:" << it->second.getIdDoc() << endl;   //BORRAR
         namesDocs[it->second.getIdDoc()] = it->first;
-        //cout << "02" << endl; //BORRAR
     }
     
     //Vector de documentos ordenados por id
@@ -138,7 +136,6 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
         //Para cada termino con la palabra indexada
         
         //FALTA LIMPIAR:
-        //cout << "n: " << n << endl; //borrar
         idf = calcIdf(n);   //FALTA -> Hacer solo si se trata de BM25
         ft = infTerm.getFtc();  //FALTA -> Hacer solo si se trata de DFR
         lambda_t = (double)ft/informacionColeccionDocs.getNumDocs();  //FALTA -> Hacer solo si se trata de DFR
@@ -146,31 +143,16 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
         logwid0 = log2(1+lambda_t);  //FALTA -> Hacer solo si se trata de DFR
         logwid1 = log2((1+lambda_t)/lambda_t);  //FALTA -> Hacer solo si se trata de DFR
 
-        //cout << "Documentos: " << endl;//Borrar
         for(unordered_map<long int, InfTermDoc>::const_iterator itDoc = l_docs.begin() ; itDoc != l_docs.end() ; itDoc++){
-            //-----------------BORRAR-------------
-            /*cout << "Palabra: " << itPal->first << endl;
-            cout << "avgdl: " << avgdl << endl;
-            cout << "idf: " << idf << endl;
-            cout << "lambda_t: " << lambda_t << endl;
-            cout << "wiq: " << wiq << endl;
-            cout << "logwid0: " << logwid0 << endl;
-            cout << "logwid1: " << logwid1 << endl;*/
-            //------------------------------------
 
             resultados[itDoc->first] += similitudPalabraDoc(avgdl,idf,infTerm,itDoc,namesDocs,
                                                             lambda_t,wiq,logwid0,logwid1);
-            //cout << "doc: " << itDoc->first << endl;//Borrar
-            //cout << "resultado: " << resultados[itDoc->first] << endl;//Borrar
-
         }
     }
 
     //Actualizamos docsOrdenados
-    //cout << "Resultados: " << endl;//Borrar
     priority_queue<ResultadoRI> docsOrdenadosTot;
     for(int i=0;i<resultados.size();i++){
-        //cout << "resultado doc " << i << ": " << resultados[i] << endl;//Borrar
         if(resultados[i]!=0){
             ResultadoRI ri(resultados[i], i, nPregunta);
 
@@ -455,10 +437,12 @@ Buscador::DFR(double avgdl,double lambda_t,double wiq,unordered_map<long int, In
                 double logwid0,double logwid1,const InformacionTermino &infTerm){
     int ftd = itDoc->second.getFt();
     int ld = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
-    double ftd2 = ftd * log2((1+(c*avgdl))/(double)ld);
+
+    double ftd2 = ftd * log2(1+c*(double)avgdl/ld);
+
     int ft = infTerm.getFtc();
     int nt = infTerm.getL_docs().size();
-
+    
     double wid0 = logwid0 + ftd2 * logwid1;
     double wid1 = (double)(ft+1)/(nt*(ftd2+1));
     double wid = wid0 * wid1;

@@ -438,14 +438,7 @@ Buscador::DFR(double avgdl,double lambda_t,double wiq,unordered_map<long int, In
     int ftd = itDoc->second.getFt();
     int ld = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
 
-    double ftd2 = ftd * log2((double)(1+c*avgdl)/ld);   //FALTA comprobar, opcion 2: con log2(1+c*(double)avgdl/ld);
-    /*
-    en imagen:
-    double ftd2 = ftd * log2((double)(1+c*avgdl)/ld);
-
-    en calculo:
     double ftd2 = ftd * log2(1+c*(double)avgdl/ld);
-    */
 
     int ft = infTerm.getFtc();
     int nt = infTerm.getL_docs().size();
