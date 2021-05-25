@@ -113,7 +113,7 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
     }
     
     //Vector de documentos ordenados por id
-    vector<double> resultados(informacionColeccionDocs.getNumDocs(),0);
+    vector<double> resultados(maxId+1,0);
     //vector<int> valoresComunes();   //avgdl , 
 
     //Calcula los valores comunes en funcion de la funcion de similitud, el resto devuelve -1
@@ -146,6 +146,7 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
         logwid0 = log2(1+lambda_t);  //FALTA -> Hacer solo si se trata de DFR
         logwid1 = log2((1+lambda_t)/lambda_t);  //FALTA -> Hacer solo si se trata de DFR
 
+        //cout << "Documentos: " << endl;//Borrar
         for(unordered_map<long int, InfTermDoc>::const_iterator itDoc = l_docs.begin() ; itDoc != l_docs.end() ; itDoc++){
             //-----------------BORRAR-------------
             /*cout << "avgdl: " << avgdl << endl;
@@ -158,22 +159,30 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
 
             resultados[itDoc->first] += similitudPalabraDoc(avgdl,idf,infTerm,itDoc,namesDocs,
                                                             lambda_t,wiq,logwid0,logwid1);
+            //cout << "doc: " << itDoc->first << endl;//Borrar
+            //cout << "resultado: " << resultados[itDoc->first] << endl;//Borrar
+
         }
     }
 
     //Actualizamos docsOrdenados
+    //cout << "Resultados: " << endl;//Borrar
+    priority_queue<ResultadoRI> docsOrdenadosTot;
     for(int i=0;i<resultados.size();i++){
+        //cout << "resultado doc " << i << ": " << resultados[i] << endl;//Borrar
         if(resultados[i]!=0){
             ResultadoRI ri(resultados[i], i, nPregunta);
 
-            docsOrdenados.push(ri);
+            docsOrdenadosTot.push(ri);
         }
     }
 
+
     //FALTA COMPROBAR SI SE ESTAN FILTRANDO LOS MAS IMPORTANTES O LOS MENOS
     //Filtramos docsOrdenados
-    while(docsOrdenados.size()>numDocumentos){
-        docsOrdenados.pop();
+    for(int i=0;i<numDocumentos && !docsOrdenadosTot.empty() ; i++){
+        docsOrdenados.push(docsOrdenadosTot.top());
+        docsOrdenadosTot.pop();
     }
 
     return true;
