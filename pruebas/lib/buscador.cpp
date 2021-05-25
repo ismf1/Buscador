@@ -149,7 +149,8 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
         //cout << "Documentos: " << endl;//Borrar
         for(unordered_map<long int, InfTermDoc>::const_iterator itDoc = l_docs.begin() ; itDoc != l_docs.end() ; itDoc++){
             //-----------------BORRAR-------------
-            /*cout << "avgdl: " << avgdl << endl;
+            /*cout << "Palabra: " << itPal->first << endl;
+            cout << "avgdl: " << avgdl << endl;
             cout << "idf: " << idf << endl;
             cout << "lambda_t: " << lambda_t << endl;
             cout << "wiq: " << wiq << endl;
@@ -436,7 +437,7 @@ Buscador::calcIdf(const int n) const{
 
     double num = N - n + 0.5;
     double den = n + 0.5;
-    return log(num/den);
+    return log2(num/den);   //Falta comprobar base del logaritmo
 }
 
 double
