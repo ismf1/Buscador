@@ -232,7 +232,6 @@ bool
 Buscador::Buscar(const  string&  dirPreguntas,  const  int&  numDocumentos,  const int& numPregInicio, const int& numPregFin){
     ifstream iFile;
     string nameFile;
-    string cadAux;
     string preguntaLocal;
 
     //Vaciamos docsOrdenados
@@ -249,10 +248,9 @@ Buscador::Buscar(const  string&  dirPreguntas,  const  int&  numDocumentos,  con
             return false;
         }else{
             preguntaLocal = "";
-            while(!iFile.eof()) {
-                getline(iFile, cadAux);
-                preguntaLocal+=cadAux + '\n';
-            }
+
+            getline(iFile, preguntaLocal);
+
             iFile.close();
 
             IndexarPregunta(preguntaLocal);
