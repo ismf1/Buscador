@@ -153,8 +153,8 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
 
         for(unordered_map<long int, InfTermDoc>::const_iterator itDoc = l_docs.begin() ; itDoc != l_docs.end() ; itDoc++){
 
-            resultados[itDoc->first] += similitudPalabraDoc(avgdl,idf,infTerm,itDoc,namesDocs,
-                                                            lambda_t,wiq,logwid0,logwid1);
+            resultados[itDoc->first] += similitudPalabraDoc(avgdl,idf,infTerm,itDoc,
+                                                            wiq,logwid0,logwid1);
         }
     }
 
@@ -423,17 +423,17 @@ Buscador::calcIdf(const int n) const{
 }
 
 double
-Buscador::similitudPalabraDoc(double avgdl,double idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
-                                double lambda_t,double wiq, double logwid0,double logwid1){
+Buscador::similitudPalabraDoc(double avgdl,double idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,
+                                double wiq, double logwid0,double logwid1){
     if(formSimilitud==0){
-        return DFR(avgdl,lambda_t,wiq,itDoc,namesDocs,logwid0,logwid1,infTerm);
+        return DFR(avgdl,wiq,itDoc,logwid0,logwid1,infTerm);
     }else{
-        return BM25(avgdl,idf,infTerm,itDoc,namesDocs);
+        return BM25(avgdl,idf,itDoc);
     }
 }
 
 double
-Buscador::DFR(double avgdl,double lambda_t,double wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs,
+Buscador::DFR(double avgdl,double wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,
                 double logwid0,double logwid1,const InformacionTermino &infTerm){
     int ftd = itDoc->second.getFt();
     int ld = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
@@ -451,7 +451,7 @@ Buscador::DFR(double avgdl,double lambda_t,double wiq,unordered_map<long int, In
 }
 
 double
-Buscador::BM25(double avgdl,double idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,vector<string> &namesDocs){
+Buscador::BM25(double avgdl,double idf,unordered_map<long int, InfTermDoc>::const_iterator &itDoc){
     int f = itDoc->second.getFt();
     int D = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
     int N = informacionColeccionDocs.getNumDocs();
