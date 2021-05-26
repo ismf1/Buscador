@@ -25,10 +25,7 @@ long int ResultadoRI::IdDoc() const {
 }
 
 bool ResultadoRI::operator< (const ResultadoRI& lhs) const {
-    if(numPregunta == lhs.numPregunta)
-        return (vSimilitud < lhs.vSimilitud);
-    else
-        return (numPregunta > lhs.numPregunta);
+    return (vSimilitud < lhs.vSimilitud);
 }
 
 ostream& operator<<(ostream &os, const ResultadoRI &res){
