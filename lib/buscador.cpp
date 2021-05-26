@@ -154,7 +154,7 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
         for(unordered_map<long int, InfTermDoc>::const_iterator itDoc = l_docs.begin() ; itDoc != l_docs.end() ; itDoc++){
 
             resultados[itDoc->first] += similitudPalabraDoc(avgdl,idf,infTerm,itDoc,
-                                                            wiq,logwid0,logwid1);
+                                                            wiq,logwid0,logwid1,n);
         }
     }
 
@@ -424,9 +424,9 @@ Buscador::calcIdf(const int n) const{
 
 double
 Buscador::similitudPalabraDoc(double avgdl,double idf,const InformacionTermino &infTerm,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,
-                                double wiq, double logwid0,double logwid1){
+                                double wiq, double logwid0,double logwid1,const int l_docs_size){
     if(formSimilitud==0){
-        return DFR(avgdl,wiq,itDoc,logwid0,logwid1,infTerm);
+        return DFR(avgdl,wiq,itDoc,logwid0,logwid1,infTerm,l_docs_size);
     }else{
         return BM25(avgdl,idf,itDoc);
     }
@@ -434,8 +434,22 @@ Buscador::similitudPalabraDoc(double avgdl,double idf,const InformacionTermino &
 
 double
 Buscador::DFR(double avgdl,double wiq,unordered_map<long int, InfTermDoc>::const_iterator &itDoc,
-                double logwid0,double logwid1,const InformacionTermino &infTerm){
+                double logwid0,double logwid1,const InformacionTermino &infTerm,const int l_docs_size){
     int ftd = itDoc->second.getFt();
+    int ld = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
+
+    double ftd2 = ftd * log2(1+c*(double)avgdl/ld);
+
+    int ft = infTerm.getFtc();
+    int nt = l_docs_size;
+    
+    double wid0 = logwid0 + ftd2 * logwid1;
+    double wid1 = (double)(ft+1)/(nt*(ftd2+1));
+    double wid = wid0 * wid1;
+
+    return wid * wiq;
+    
+    /*int ftd = itDoc->second.getFt();
     int ld = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
 
     double ftd2 = ftd * log2(1+c*(double)avgdl/ld);
@@ -447,7 +461,7 @@ Buscador::DFR(double avgdl,double wiq,unordered_map<long int, InfTermDoc>::const
     double wid1 = (double)(ft+1)/(nt*(ftd2+1));
     double wid = wid0 * wid1;
 
-    return wid * wiq;
+    return wid * wiq;*/
 }
 
 double
