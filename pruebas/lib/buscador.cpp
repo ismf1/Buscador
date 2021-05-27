@@ -105,9 +105,22 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
     }
     
     namesDocs.resize(maxId+1);
+    namesNoRuteDocs.resize(maxId+1);
     
     for(unordered_map<string, InfDoc>::const_iterator it=indiceDocs.begin();it!=indiceDocs.end();it++){
-        namesDocs[it->second.getIdDoc()] = it->first;
+        int id = it->second.getIdDoc();
+        namesDocs[id] = it->first;
+        namesNoRuteDocs[id] = it->first;
+
+        int pos=0;
+        while ((pos = namesNoRuteDocs[id].find("/")) != std::string::npos) {
+            namesNoRuteDocs[id].erase(0, pos + 1);
+        }
+
+        while ((pos = namesNoRuteDocs[id].find(".")) != std::string::npos) {
+            namesNoRuteDocs[id] = namesNoRuteDocs[id].substr(0, pos);
+        }
+
     }
     
     //Vector de documentos ordenados por id
@@ -350,7 +363,7 @@ Buscador::ImprimirResultadoBusqueda(const int& numDocumentos, ostream& os) const
             }
 
             //NumPregunta  FormulaSimilitud  NomDocumento  Posicion  PuntuacionDoc PreguntaIndexada
-            os << it->NumPregunta() << " " << formSimilitudStr << " " << namesDocs[it->IdDoc()] << " "
+            os << it->NumPregunta() << " " << formSimilitudStr << " " << namesNoRuteDocs[it->IdDoc()] << " "
             << i << " " << it->VSimilitud() << " " << preguntaIndexada << "\n";
         }
 
@@ -449,19 +462,6 @@ Buscador::DFR(double avgdl,double wiq,unordered_map<long int, InfTermDoc>::const
 
     return wid * wiq;
     
-    /*int ftd = itDoc->second.getFt();
-    int ld = indiceDocs[namesDocs[itDoc->first]].getNumPalSinParada();
-
-    double ftd2 = ftd * log2(1+c*(double)avgdl/ld);
-
-    int ft = infTerm.getFtc();
-    int nt = infTerm.getL_docs().size();
-    
-    double wid0 = logwid0 + ftd2 * logwid1;
-    double wid1 = (double)(ft+1)/(nt*(ftd2+1));
-    double wid = wid0 * wid1;
-
-    return wid * wiq;*/
 }
 
 double

@@ -78,4 +78,5 @@ class Buscador: public IndexadorHash {
         double k1; // Constante del modelo BM25
         double b; // Constante del modelo BM25
         vector<string> namesDocs;
+        vector<string> namesNoRuteDocs;
 };
