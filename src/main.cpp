@@ -17,10 +17,11 @@ double getcputime(void) {
 } 
 
 main() { 
-    double aa=getcputime();
     IndexadorHash b("./StopWordsEspanyol.txt",   ".   ,:",   false,   false, "./indicePruebaEspanyol", 0, false, false); 
     b.Indexar("ficherosTimes.txt"); 
     b.GuardarIndexacion(); 
+
+    double aa=getcputime();
     Buscador a("./indicePruebaEspanyol", 0); 
     a.IndexarPregunta("KENNEDY  ADMINISTRATION  PRESSURE  ON  NGO  DINH  DIEM  TO STOP SUPPRESSING THE BUDDHISTS . "); 
     a.Buscar(423); 
