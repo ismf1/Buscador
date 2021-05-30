@@ -343,7 +343,7 @@ Buscador::ImprimirResultadoBusqueda(const  int&  numDocumentos,  const  string& 
 
 void
 Buscador::ImprimirResultadoBusqueda(const int& numDocumentos, ostream& os) const{
-    int pregAnt=-1;
+    int pregAnt=docsOrdenados.begin()->NumPregunta();
     int i=0;
     string preguntaIndexada="";
     string formSimilitudStr="";

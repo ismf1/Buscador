@@ -86,7 +86,7 @@ alguno  de  los  términos  de  la  pregunta  (tras  eliminar  las palabras de p
 */
 Buscador&
 Buscador::operator= (const Buscador& buscador){
-    IndexadorHash::operator=(buscador);
+    IndexadorHash::operator=(buscador); //FALTA REVISAR
     docsOrdenados = buscador.docsOrdenados;
     formSimilitud = buscador.formSimilitud; 
     c = buscador.c; 
@@ -149,6 +149,7 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
         //calcularValoresPalabra(...);
         //Para cada termino con la palabra indexada
         
+        //FALTA LIMPIAR:
         if(formSimilitud == 0){
             //DFR
             ft = infTerm.getFtc();
@@ -181,6 +182,7 @@ Buscador::Buscar(const int& numDocumentos,const int& nPregunta){
     }
 
 
+    //FALTA COMPROBAR SI SE ESTAN FILTRANDO LOS MAS IMPORTANTES O LOS MENOS
     //Filtramos docsOrdenados
     for(int i=0;i<numDocumentos && !docsOrdenadosTot.empty() ; i++){
         docsOrdenados.push_back(docsOrdenadosTot.top());
@@ -254,6 +256,7 @@ Buscador::Buscar(const  string&  dirPreguntas,  const  int&  numDocumentos,  con
         iFile.open(nameFile.c_str());
 
         if(!iFile) {
+            //FALTA COMPROBAR CONTROL ERROR
             cerr << "ERROR: No existe el archivo: " << nameFile << "\n";
             return false;
         }else{
@@ -328,7 +331,7 @@ Buscador::ImprimirResultadoBusqueda(const  int&  numDocumentos,  const  string& 
     oFile.open(nombreFichero);
 
     if(!oFile){
-        cerr << "ERROR: No es posible abrir el archivo " << nombreFichero << "\n";
+        //FALTA ERROR
         return false;
     }else{
         ImprimirResultadoBusqueda(numDocumentos,oFile);
@@ -340,7 +343,7 @@ Buscador::ImprimirResultadoBusqueda(const  int&  numDocumentos,  const  string& 
 
 void
 Buscador::ImprimirResultadoBusqueda(const int& numDocumentos, ostream& os) const{
-    int pregAnt=-1;
+    int pregAnt=docsOrdenados.begin()->NumPregunta();
     int i=0;
     string preguntaIndexada="";
     string formSimilitudStr="";
@@ -429,7 +432,7 @@ Buscador::calcIdf(const int n) const{
 
     double num = N - n + 0.5;
     double den = n + 0.5;
-    return log2(num/den);
+    return log2(num/den);   //Falta comprobar base del logaritmo
 }
 
 double
