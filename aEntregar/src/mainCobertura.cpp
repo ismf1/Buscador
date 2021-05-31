@@ -17,11 +17,13 @@ double getcputime(void) {
 } 
 
 main() { 
-    IndexadorHash b("./StopWordsEspanyol.txt",   ".   ,:",   false,   false, "./indicePruebaEspanyol", 0, false, false); 
+    //IndexadorHash b("./StopWordsIngles.txt",   ".   ,:",   false,   true, "./CorpusTime/Documentos", 0, false, false); 
+    IndexadorHash b("./StopWordsIngles.txt",   ".   ,:",   false,   true, "./indicePruebaEspanyol", 2, false, false); 
     b.Indexar("ficherosTimes.txt"); 
     b.GuardarIndexacion(); 
 
     double aa=getcputime();
+    //Buscador a("./indicePruebaEspanyol", 1); 
     Buscador a("./indicePruebaEspanyol", 0); 
     a.IndexarPregunta("KENNEDY  ADMINISTRATION  PRESSURE  ON  NGO  DINH  DIEM  TO STOP SUPPRESSING THE BUDDHISTS . "); 
     a.Buscar(423); 
@@ -32,7 +34,7 @@ main() {
     time(&inicioB); 
     double aaB=getcputime(); 
     a.Buscar("./CorpusTime/Preguntas/",   423,   1, 83); 
-    a.ImprimirResultadoBusqueda(423); 
+    a.ImprimirResultadoBusqueda(423,"fich_salida_buscador_alumno-DFR-conStem.txt"); 
     double bbB=getcputime()-aaB; 
     cout << "\nHa tardado primero " << bb << " segundos\n\n"; 
     cout << "\nHa tardado segundo " << bbB << " segundos\n\n"; 
